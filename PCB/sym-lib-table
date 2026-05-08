@@ -1,0 +1,4 @@
+(sym_lib_table
+  (version 7)
+  (lib (name "windLibrary")(type "KiCad")(uri "${KIPRJMOD}/windLibrary.kicad_sym")(options "")(descr ""))
+)
