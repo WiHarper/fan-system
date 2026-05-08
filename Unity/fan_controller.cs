@@ -4,27 +4,27 @@ using UnityEngine.InputSystem;
 
 public class DeviceController : MonoBehaviour
 {
-    // --- NETWORK SETTINGS ---
+    // Network settings
     private UdpClient udpClient;
     private int udpPort = 8888;
     
-    // IP Addresses for your two nodes
+    // IP addresses
     private string ipNode1 = "192.168.50.100"; 
     private string ipNode2 = "192.168.50.101"; 
 
-    // --- NODE 1 STATE VARIABLES (0 to 255) ---
+    // Node 1 state variables
     private float n1_fan = 0f;
     private float n1_servo1 = 127f; 
     private float n1_servo2 = 127f; 
     private int last_n1_f = -1, last_n1_s1 = -1, last_n1_s2 = -1;
 
-    // --- NODE 2 STATE VARIABLES (0 to 255) ---
+    // Node 2 state variables
     private float n2_fan = 0f;
     private float n2_servo1 = 127f; 
     private float n2_servo2 = 127f; 
     private int last_n2_f = -1, last_n2_s1 = -1, last_n2_s2 = -1;
 
-    // How fast the values change while holding the key
+    // Value change rate
     public float adjustmentRate = 150f; 
 
     void Start()
@@ -34,7 +34,7 @@ public class DeviceController : MonoBehaviour
         Debug.Log("NODE 1 -> Fan: R/F | Pitch: W/S | Yaw: A/D");
         Debug.Log("NODE 2 -> Fan: U/J | Pitch: Up/Dn | Yaw: L/R");
         
-        // Force an initial update to set both fans to 0 and servos to center
+        // Send initial state to ensure devices start with known values
         ForceSendState();
     }
 

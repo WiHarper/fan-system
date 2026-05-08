@@ -2,19 +2,19 @@
 #include <Ethernet.h>
 #include <EthernetUdp.h>
 
-// ---------------- W5500 pins for ESP32-S3 ----------------
+// W5500 SPI pins
 #define W5500_MISO 12
 #define W5500_MOSI 11
 #define W5500_SCLK 13 
 #define W5500_CS   14
 #define W5500_RST  9
 
-// ---------------- PWM Output Pins ----------------
+// PWM output pins
 #define FAN1_PIN   15
 #define SERVO1_PIN 16
 #define SERVO2_PIN 17
 
-// ---------------- Network settings ----------------
+// Network configuration
 byte mac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };
 IPAddress ip(192, 168, 50, 101);
 unsigned int localPort = 8888;
@@ -22,9 +22,8 @@ EthernetUDP Udp;
 
 byte packetBuffer[3];
 
-// ---------------- PWM Setup Functions ----------------
+// PWM setup functions
 bool setupFan(int pin) {
-  // Fans like higher frequencies. 10 kHz, 8-bit resolution (0-255)
   bool ok = ledcAttach(pin, 10000, 8);
   if (!ok) return false;
   ledcWrite(pin, 0); // Start off
@@ -32,24 +31,18 @@ bool setupFan(int pin) {
 }
 
 bool setupServo(int pin) {
-  // Servos REQUIRE 50 Hz. ESP32-S3 supports a MAX of 14-bit resolution!
   bool ok = ledcAttach(pin, 50, 14);
   if (!ok) return false;
   
-  // Start servo at middle position (~1.5ms pulse)
-  // 14-bit max is 16384 steps. At 50Hz (20ms period), 1.5ms is roughly 1229 steps.
+  // Start at middle
   ledcWrite(pin, 1229); 
   return true;
 }
 
 void applyPwmStates(uint8_t fan1, uint8_t servo1, uint8_t servo2) {
-  // 1. Fan uses direct 8-bit duty cycle (0-255)
   ledcWrite(FAN1_PIN, fan1);
 
-  // 2. Servos map the 0-255 byte to 14-bit duty cycles
-  // A standard servo expects a 1ms (0°) to 2ms (180°) pulse over a 20ms period.
-  // 20ms period at 14-bit = 16384 steps. 
-  // 1ms pulse = ~819 steps. 2ms pulse = ~1638 steps.
+
   uint32_t s1_duty = map(servo1, 0, 255, 819, 1638);
   uint32_t s2_duty = map(servo2, 0, 255, 819, 1638);
 
@@ -72,7 +65,7 @@ void setup() {
   digitalWrite(W5500_RST, HIGH);
   delay(100);
 
-  // Start SPI and Ethernet
+  // Start SPI and ethernet
   SPI.begin(W5500_SCLK, W5500_MISO, W5500_MOSI, W5500_CS);
   Ethernet.init(W5500_CS);
   Ethernet.begin(mac, ip);
@@ -84,7 +77,7 @@ void setup() {
 
   Udp.begin(localPort);
 
-  // Set up PWM outputs safely
+  // Set up PWM outputs 
   if (!setupFan(FAN1_PIN) || !setupServo(SERVO1_PIN) || !setupServo(SERVO2_PIN)) {
     Serial.println("One or more PWM pins failed to initialize.");
     while (true) { delay(1); }
