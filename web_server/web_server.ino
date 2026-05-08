@@ -5,7 +5,7 @@
 // ---------------- W5500 pins for ESP32-S3 ----------------
 #define W5500_MISO 12
 #define W5500_MOSI 11
-#define W5500_SCLK 13
+#define W5500_SCLK 13 
 #define W5500_CS   14
 #define W5500_RST  9
 
@@ -16,7 +16,7 @@
 
 // ---------------- Network settings ----------------
 byte mac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };
-IPAddress ip(192, 168, 50, 100);
+IPAddress ip(192, 168, 50, 101);
 unsigned int localPort = 8888;
 EthernetUDP Udp;
 
